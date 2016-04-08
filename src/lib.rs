@@ -1,5 +1,5 @@
 use std::vec::Vec;
-
+use std::iter::repeat;
 
 pub struct SegmentTree {
     array: Vec<i32>,
@@ -11,17 +11,9 @@ impl SegmentTree {
         let mut tree_size = 1;
         while tree_size < arr.len() { tree_size *= 2};
         let mut tree = Vec::with_capacity(tree_size * 2);
-        for _ in 0..tree_size {
-            tree.push(0);
-        }
-        for x in arr.iter() {
-            tree.push(*x);
-        }
-        // add zeros to make 2^n sized array
-        // alternatively check if node has children
-        for _ in (arr.len() +tree_size) .. (tree_size*2) {
-            tree.push(0);
-        }
+        tree.extend(repeat(0).take(tree_size));
+        tree.extend(arr);
+        tree.extend(repeat(0).take(tree_size - arr.len()));
         for i in (1..tree_size).rev() {
             tree[i] = f(tree[2*i], tree[2*i +1]);
         }
