@@ -1,0 +1,6 @@
+[package]
+name = "contestlib"
+version = "0.1.0"
+authors = ["ilari"]
+
+[dependencies]
