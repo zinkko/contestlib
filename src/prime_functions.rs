@@ -1,7 +1,5 @@
 use std::vec::Vec;
 use std::iter::repeat;
-use std::cmp::max;
-use std::cmp::min;
 
 pub fn least_divisors_up_to(n : usize) -> (Vec<usize>, Vec<usize>) {
     let mut least_factor = Vec::with_capacity(n+1);
