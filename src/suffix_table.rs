@@ -27,7 +27,31 @@ impl SuffixTable {
             }
             table[j] = index;
         }
-        (table, index == tuples.len()) // the table is ready if no characters are the same
+        (table, index == tuples.len()-1) // the table is ready if no characters are the same
+    }
+
+    fn reorder_table(p_table: &mut Vec<usize>, length: usize) -> bool {
+        let mut tuples : Vec<((usize, i32), usize)> = Vec::with_capacity((*p_table).len());
+        let max = (*p_table).len() - length - 1;
+        for (i, &element) in (*p_table).iter().enumerate() {
+            if i > max {
+                tuples.push(((element, -1), i));
+            }
+            else {
+                tuples.push(((element, (*p_table)[i + length] as i32), i));
+            }
+        }
+        tuples.sort();
+        let mut index = 0;
+        let (mut tuple_of_this_index, _) = tuples[0];
+        for &(t, j) in tuples.iter() {
+            if t != tuple_of_this_index {
+                index += 1;
+                tuple_of_this_index = t;
+            }
+            (*p_table)[j] = index;
+        }
+        index == tuples.len() -1
     }
 
     pub fn new(input : String) -> SuffixTable {
@@ -36,6 +60,10 @@ impl SuffixTable {
         if done {
             SuffixTable{ characters : chrs, table : table }
         } else {
+            let mut length = 2;
+            while (!SuffixTable::reorder_table(&mut table, length)) {
+                 length *= 2;
+            }
             SuffixTable{ characters : chrs, table : table}
         }
     }
@@ -55,5 +83,11 @@ mod test {
     fn test_all_chars_different() {
         let s_table = SuffixTable::new("cembalo".to_string());
         assert_eq!(s_table.table, vec![2,3,5,1,0,4,6]);
+    }
+
+    #[test]
+    fn test_simple() {
+        let s_table = SuffixTable::new("banana".to_string());
+        assert_eq!(s_table.table, vec![3,2,5,1,4,0]);
     }
 }
